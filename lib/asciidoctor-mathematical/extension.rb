@@ -9,24 +9,25 @@ include ::Asciidoctor
 class MathematicalTreeprocessor < Extensions::Treeprocessor
   def process document
     if (stem_blocks = document.find_by context: :stem)
+      # TODO: add support to ppi attributes. Shall we use `mathematical-ppi` or
+      # `mathematical-png-ppi`?
       format = :png
       if document.attributes['mathematical-format']
-        format_str = document.attributes['mathematical-format']
+        format_str = document.attributes['mathematical-format'].lower
         if format_str == 'png'
           format = :png
         elsif format_str == 'svg'
           format = :svg
         end
       end
-      image_postfix = ".#{format}"
-      scale = 1.0
-      if format == :png
-        scale = 72.0/300.0
-      end
       ppi = 72.0
-      if format == :png
+      if document.attributes['mathematical-ppi']
+        ppi = document.attributes['mathematical-ppi'].as_number
+      elsif format == :png:
         ppi = 300.0
       end
+      image_postfix = ".#{format}"
+
       # The no-args constructor defaults to SVG and standard delimiters ($..$ for inline, $$..$$ for block)
       mathematical = ::Mathematical.new({ :format => format, :ppi => ppi })
       image_output_dir = resolve_image_output_dir document
@@ -118,7 +119,9 @@ class MathematicalPreprocessor < Extensions::Preprocessor
       scale = 72.0/300.0
     end
     ppi = 72.0
-    if format == :png
+    if document.attributes['mathematical-ppi']
+      ppi = document.attributes['mathematical-ppi'].as_number
+    elsif format == :png
       ppi = 300.0
     end
 
