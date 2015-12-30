@@ -23,7 +23,7 @@ class MathematicalTreeprocessor < Extensions::Treeprocessor
       ppi = 72.0
       if document.attributes['mathematical-ppi']
         ppi = document.attributes['mathematical-ppi'].as_number
-      elsif format == :png:
+      elsif format == :png
         ppi = 300.0
       end
       image_postfix = ".#{format}"
